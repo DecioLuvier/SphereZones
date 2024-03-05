@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <style>
+        #openseadragon {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #cursorViewportPosition,
+        .input-overlay,
+        .textHelper,
+        .button-overlay {
+            position: fixed;
+            color: white;
+            font-size: 15px;
+            z-index: 9999;
+        }
+
+        #cursorViewportPosition {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid black;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            right: 1vw;
+            bottom: 1vh;
+        }
+
+        .textHelper {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid black;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            top: 1vh;
+            left: 1vw;
+        }
+
+        .input-overlay {
+            top: 1vh;
+            right: 2vw;
+            min-width: 10vw;
+            max-width: 30vw;
+
+        }
+
+        .input-row {
+            padding: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid black;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .button-overlay {
+            bottom: 1vh;
+            Left: 1vw;
+            padding: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid black;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="openseadragon"></div>
+    <span id="cursorViewportPosition"></span>
+    <div class="textHelper">
+        Click on areas to make changes!
+        <br>
+        -
+        <br>
+        Made by <a href="https://discord.com/invite/cS62fmW6TF">#pw_another</a>
+        <br>
+        Check the <a href="https://www.curseforge.com/palworld/lua-code-mods/sphere">SphereProject</a>
+    </div>
+
+    <div class="input-overlay"></div>
+    <div class="button-overlay d-flex flex-column">
+        <button id="addRectangleButton" class="btn btn-primary btn-sm mb-2">New Rectangle</button>
+        <button id="addCircleButton" class="btn btn-primary btn-sm mb-2">New Circle</button>
+        <button id="importButton" class="btn btn-primary btn-sm mb-2">Import</button>
+        <button id="exportButton" class="btn btn-primary btn-sm ">Export</button>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+    <script src="zones.js"></script>
+
+    <script>
+
+        document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+        function mapToRange(value, fromLow, fromHigh, toLow, toHigh) {
+            return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+        }
+
+        var viewer = OpenSeadragon({
+            showNavigationControl: false,
+            showZoomControl: false,
+            id: "openseadragon",
+            tileSources: [{
+                type: 'image',
+                url: 'Map.jpg'
+            }],
+            minZoomLevel: 1,
+            maxZoomLevel: 10,
+            visibilityRatio: 1.0,
+            defaultZoomLevel: 1,
+            constrainDuringPan: true,
+            zoomPerClick: 1
+        });
+
+        function onMouseTrackerMove(event) {
+            var viewerX = event.position.x;
+            var viewerY = event.position.y;
+            var windowPoint = new OpenSeadragon.Point(viewerX, viewerY);
+            var viewportPoint = viewer.viewport.windowToImageCoordinates(windowPoint);
+            var imageSize = viewer.source.dimensions;
+            var mappedX = mapToRange(viewportPoint.x, 0, imageSize.x, -1000, 1000);
+            var mappedY = mapToRange(viewportPoint.y, 0, imageSize.y, 1000, -1000);
+            $("#cursorViewportPosition").text(Math.round(mappedX) + "," + Math.round(mappedY));
+        }
+
+        new OpenSeadragon.MouseTracker({
+            element: document,
+            moveHandler: onMouseTrackerMove
+        }).setTracking(true);
+
+
+
+        $('#addCircleButton').click(function () {
+            CreateCircle(0, 0, 100, "Example", {
+                "players": {
+                    "canDamageStructures": false,
+                    "canDamagePlayers": false,
+                    "canDamagePlayersPals": false,
+                    "canDamageWildPals": false
+                },
+                "playerPals": {
+                    "canDamageStructures": false,
+                    "canDamagePlayers": false,
+                    "canDamagePlayersPals": false,
+                    "canDamageWildPals": false
+                },
+                "wildPals": {
+                    "canDamageStructures": false,
+                    "canDamagePlayers": false,
+                    "canDamagePlayersPals": false,
+                    "canDamageWildPals": false
+                }
+            });
+        });
+
+        $('#addRectangleButton').click(function () {
+            CreateRectangle(-100, 100, 200, 200, "Example", {
+                "players": {
+                    "canDamageStructures": false,
+                    "canDamagePlayers": false,
+                    "canDamagePlayersPals": false,
+                    "canDamageWildPals": false
+                },
+                "playerPals": {
+                    "canDamageStructures": false,
+                    "canDamagePlayers": false,
+                    "canDamagePlayersPals": false,
+                    "canDamageWildPals": false
+                },
+                "wildPals": {
+                    "canDamageStructures": false,
+                    "canDamagePlayers": false,
+                    "canDamagePlayersPals": false,
+                    "canDamageWildPals": false
+                }
+            });
+        });
+
+        $('#exportButton').click(function () {
+            var jsonData = [];
+            var inputRows = document.querySelectorAll('.input-row');
+
+            inputRows.forEach(function (inputRow, inputIndex) {
+                var zones = {};
+                var type = inputRow.getAttribute("type");
+                var xValue = parseInt(inputRow.querySelector('.x-value').innerText);
+                var yValue = parseInt(inputRow.querySelector('.y-value').innerText);
+                var nameValue = inputRow.querySelector('.name-input').value;
+
+                zones.type = type;
+                zones.name = nameValue;
+
+                if (type === "Rectangle") {
+                    var widthValue = parseInt(inputRow.querySelector('.width-value').innerText);
+                    var heightValue = parseInt(inputRow.querySelector('.height-value').innerText);
+                    if (widthValue !== null && heightValue !== null) {
+                        zones.y1 = (yValue * 463) - 123467;
+                        zones.x1 = (xValue * 463) + 157664;
+                        zones.height = heightValue * 463;
+                        zones.width = widthValue * 463;
+                    }
+                } else if (type === "Circle") {
+                    var radiusValue = parseInt(inputRow.querySelector('.radius-value').innerText);
+                    if (radiusValue !== null) {
+                        zones.y = (yValue * 463) - 123467;
+                        zones.x = (xValue * 463) + 157664;
+                        zones.radius = radiusValue * 463;
+                    }
+                }
+
+                var tabContents = inputRow.querySelectorAll('.tab-content .tab-pane');
+
+                zones.permissions = {}
+
+                tabContents.forEach(function (tabContent, tabIndex) {
+                    var checkboxes = tabContent.querySelectorAll('input[type="checkbox"]');
+                    var tabName = tabContent.id.split("-")[0];
+                    var permissionObject = {};
+
+                    checkboxes.forEach(function (checkbox) {
+                        var permissionName = checkbox.nextElementSibling.textContent;
+                        var permissionValue = checkbox.checked;
+                        permissionObject[permissionName] = permissionValue;
+                    });
+
+                    zones.permissions[tabName] = permissionObject;
+                });
+
+                jsonData.push(zones);
+            });
+
+            var jsonString = JSON.stringify(jsonData);
+            var blob = new Blob([jsonString], { type: "application/json" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'zones.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+
+        $('#importButton').click(function () {
+            var fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'application/json';
+
+            fileInput.addEventListener('change', function (event) {
+                var file = event.target.files[0];
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var jsonString = e.target.result;
+                    var importedData = JSON.parse(jsonString);
+
+                    importedData.forEach(function (zones) {
+                        if (zones.type === "Rectangle") {
+                            CreateRectangle((zones.x1 - 157664) / 463, (zones.y1 + 123467) / 463, zones.width / 463, zones.height / 463, zones.name, zones.permissions);
+                        } else if (zones.type === "Circle") {
+                            CreateCircle((zones.x - 157664) / 463, (zones.y + 123467) / 463, zones.radius / 463, zones.name, zones.permissions);
+                        }
+
+
+                    });
+                };
+                reader.readAsText(file);
+            });
+
+            fileInput.click();
+        });
+
+
+
+    </script>
+
+</body>
+
+</html>
