@@ -87,7 +87,6 @@
     <div class="button-overlay d-flex flex-column">
         <button id="addRectangleButton" class="btn btn-primary btn-sm mb-2">New Rectangle</button>
         <button id="addCircleButton" class="btn btn-primary btn-sm mb-2">New Circle</button>
-        <button id="importButton" class="btn btn-primary btn-sm mb-2">Import</button>
         <button id="exportButton" class="btn btn-primary btn-sm ">Export</button>
     </div>
 
@@ -143,46 +142,46 @@
 
         $('#addCircleButton').click(function () {
             CreateCircle(0, 0, 100, "Example", {
-                "players": {
-                    "canDamageStructures": false,
-                    "canDamagePlayers": false,
-                    "canDamagePlayersPals": false,
-                    "canDamageWildPals": false
+                "player": {
+                    "player": false,
+                    "otomo": false,
+                    "monster": false,
+                    "structure": false
                 },
-                "playerPals": {
-                    "canDamageStructures": false,
-                    "canDamagePlayers": false,
-                    "canDamagePlayersPals": false,
-                    "canDamageWildPals": false
+                "otomo": {
+                    "player": false,
+                    "otomo": false,
+                    "monster": false,
+                    "structure": false
                 },
-                "wildPals": {
-                    "canDamageStructures": false,
-                    "canDamagePlayers": false,
-                    "canDamagePlayersPals": false,
-                    "canDamageWildPals": false
+                "monster": {
+                    "player": false,
+                    "otomo": false,
+                    "monster": false,
+                    "structure": false
                 }
             });
         });
 
         $('#addRectangleButton').click(function () {
             CreateRectangle(-100, 100, 200, 200, "Example", {
-                "players": {
-                    "canDamageStructures": false,
-                    "canDamagePlayers": false,
-                    "canDamagePlayersPals": false,
-                    "canDamageWildPals": false
+                "player": {
+                    "player": false,
+                    "otomo": false,
+                    "monster": false,
+                    "structure": false
                 },
-                "playerPals": {
-                    "canDamageStructures": false,
-                    "canDamagePlayers": false,
-                    "canDamagePlayersPals": false,
-                    "canDamageWildPals": false
+                "otomo": {
+                    "player": false,
+                    "otomo": false,
+                    "monster": false,
+                    "structure": false
                 },
-                "wildPals": {
-                    "canDamageStructures": false,
-                    "canDamagePlayers": false,
-                    "canDamagePlayersPals": false,
-                    "canDamageWildPals": false
+                "monster": {
+                    "player": false,
+                    "otomo": false,
+                    "monster": false,
+                    "structure": false
                 }
             });
         });
@@ -221,21 +220,24 @@
 
                 var tabContents = inputRow.querySelectorAll('.tab-content .tab-pane');
 
-                zones.permissions = {}
+                zones.damagePermissions = {}
 
                 tabContents.forEach(function (tabContent, tabIndex) {
                     var checkboxes = tabContent.querySelectorAll('input[type="checkbox"]');
                     var tabName = tabContent.id.split("-")[0];
-                    var permissionObject = {};
+                    var permissionArray = [];
 
                     checkboxes.forEach(function (checkbox) {
-                        var permissionName = checkbox.nextElementSibling.textContent;
+                        var permissionName = checkbox.nextElementSibling.getAttribute('permvalue');
                         var permissionValue = checkbox.checked;
-                        permissionObject[permissionName] = permissionValue;
+                        if (permissionValue) {
+                            permissionArray.push(permissionName);
+                        }
                     });
 
-                    zones.permissions[tabName] = permissionObject;
+                    zones.damagePermissions[tabName] = permissionArray;
                 });
+
 
                 jsonData.push(zones);
             });
@@ -250,37 +252,6 @@
             a.click();
             document.body.removeChild(a);
         });
-
-        $('#importButton').click(function () {
-            var fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'application/json';
-
-            fileInput.addEventListener('change', function (event) {
-                var file = event.target.files[0];
-
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var jsonString = e.target.result;
-                    var importedData = JSON.parse(jsonString);
-
-                    importedData.forEach(function (zones) {
-                        if (zones.type === "Rectangle") {
-                            CreateRectangle((zones.x1 - 157664) / 463, (zones.y1 + 123467) / 463, zones.width / 463, zones.height / 463, zones.name, zones.permissions);
-                        } else if (zones.type === "Circle") {
-                            CreateCircle((zones.x - 157664) / 463, (zones.y + 123467) / 463, zones.radius / 463, zones.name, zones.permissions);
-                        }
-
-
-                    });
-                };
-                reader.readAsText(file);
-            });
-
-            fileInput.click();
-        });
-
-
 
     </script>
 

@@ -234,28 +234,35 @@ function GetPermissions(UniqueIndex, permissions) {
     return `
     <ul class="nav nav-tabs nav-fill">
     <li class="nav-item">
-        <button class="btn  text-white active fs-10 shadow" data-bs-toggle="tab" href="#players-${UniqueIndex}">Players</button>
+        <button class="btn  text-white active fs-10 shadow" data-bs-toggle="tab" href="#player-${UniqueIndex}">Players</button>
     </li>
     <li class="nav-item">
-        <button class="btn  text-white fs-10 shadow" data-bs-toggle="tab" href="#playerPals-${UniqueIndex}">PlayerPals</button>
+        <button class="btn  text-white fs-10 shadow" data-bs-toggle="tab" href="#otomo-${UniqueIndex}">PlayerPals</button>
     </li>
     <li class="nav-item">
-        <button class="btn  text-white fs-10 shadow" data-bs-toggle="tab" href="#wildPals-${UniqueIndex}">WildPals</button>
+        <button class="btn  text-white fs-10 shadow" data-bs-toggle="tab" href="#monster-${UniqueIndex}">WildPals</button>
     </li>
 </ul>
 
 <div class="tab-content mt-3">
-    <div class="tab-pane fade show active" id="players-${UniqueIndex}">
-        ${getCheckboxesHTML(permissions.players)}
+    <div class="tab-pane fade show active" id="player-${UniqueIndex}">
+        ${getCheckboxesHTML(permissions.player)}
     </div>
-    <div class="tab-pane fade" id="playerPals-${UniqueIndex}">
-        ${getCheckboxesHTML(permissions.playerPals)}
+    <div class="tab-pane fade" id="otomo-${UniqueIndex}">
+        ${getCheckboxesHTML(permissions.otomo)}
     </div>
-    <div class="tab-pane fade" id="wildPals-${UniqueIndex}">
-        ${getCheckboxesHTML(permissions.wildPals)}
+    <div class="tab-pane fade" id="monster-${UniqueIndex}">
+        ${getCheckboxesHTML(permissions.monster)}
     </div>
 </div>
     `;
+}
+
+var naguentomaisdepoiseuresolvoisso = {
+    "player": "Players",
+    "otomo": "PalPlayers",
+    "monster": "WildPals/Npcs",
+    "structure": "Structures"
 }
 
 function getCheckboxesHTML(permissionSet) {
@@ -264,7 +271,7 @@ function getCheckboxesHTML(permissionSet) {
         checkboxesHTML += `
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" ${value ? 'checked' : ''}>
-                <label class="form-check-label">${permission}</label>
+                <label class="form-check-label" permvalue = ${permission}>Can damage ${naguentomaisdepoiseuresolvoisso[permission]}</label>
             </div>`;
     }
     return checkboxesHTML;
