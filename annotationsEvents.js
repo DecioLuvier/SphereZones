@@ -236,10 +236,14 @@ function CreateInput(permissions) {
             <div class="tab-pane fade show active" id="Players-${globaIDIndex}">
                 <div class="instanceType" key="Player">
                     <div class="category" key="world">
-                        <span>World:</span>
+                        <span>Non-Admin Can:</span>
                         <div class="form-check form-switch">
                             <input class="form-check-input" val="Build" type="checkbox" role="switch">
-                            <label class="form-check-label">Non-Admin Can Build</label>
+                            <label class="form-check-label">Build Structures</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" val="Dismantle" type="checkbox" role="switch">
+                            <label class="form-check-label"> Dismantle Structures</label>
                         </div>
                     </div>
                     <div class="category" key="damage">
