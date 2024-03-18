@@ -10,6 +10,10 @@ anno.on('selectAnnotation', function (annotation) {
     $("div[zone-id='" + annotation.id + "']").show();
 });
 
+anno.on('deleteAnnotation', function (annotation) {
+    $("div[zone-id='" + annotation.id + "']").remove();
+});
+
 $('.input-overlay').on('click', '.close-button', function () {
     $(this).closest('.input-row').hide();
     anno.cancelSelected();
@@ -121,7 +125,7 @@ $('#exportButton').click(function () {
 
             data["zones"] = zones
 
-            var jsonString = JSON.stringify(data);
+            var jsonString = JSON.stringify(data, null, 2);
             var blob = new Blob([jsonString], { type: "application/json" });
             var url = URL.createObjectURL(blob);
             var a = document.createElement('a');
@@ -167,8 +171,6 @@ $('#importButton').click(function () {
                         points.push(`${originalX},${originalY}`);
                     })
 
-                    points.join(' ');
-
                     annotationData.push(
                         {
                             "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -178,7 +180,7 @@ $('#importButton').click(function () {
                             "target": {
                                 "selector": {
                                     "type": "SvgSelector",
-                                    "value": `<svg><polygon points="${points}"></polygon></svg>`
+                                    "value": `<svg><polygon points="${points.join(' ')}"></polygon></svg>`
                                 }
                             }
                         }
